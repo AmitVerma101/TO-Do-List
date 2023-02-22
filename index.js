@@ -20,7 +20,7 @@ function getI(){
 
 //Adding a listener on the textarea
 
-document.getElementById("tArea").addEventListener("keydown",getValue);
+document.getElementById("tArea").addEventListener("keyup",getValue);
 let ans;
 // console.log(typeof document.getElementById("tArea").value)
 
@@ -34,15 +34,20 @@ function getValue(event){
    if(event.keyCode==13){
      // localStorage.setItem(JSON.stringify(tArea.value));
      // addToList();
-     addToLocalStorage();
-     //adding the element on the web page
-    // addToList();
-      tArea.value='' 
-      tArea.blur();
-      //incrementing the value of i
-       let x=JSON.parse(localStorage.getItem("i"));
-       x++;
-       localStorage.setItem("i",JSON.stringify(x));  
+     if(tArea.value.trim()!=''){
+      addToLocalStorage();
+      //adding the element on the web page
+     // addToList();
+      
+       //incrementing the value of i
+        let x=JSON.parse(localStorage.getItem("i"));
+        x++;
+        localStorage.setItem("i",JSON.stringify(x)); 
+     }
+     tArea.value='' 
+     
+     tArea.blur();
+     tArea.focus();
    }
   
    
@@ -80,27 +85,33 @@ function displayLocalStorage(){
    let arrayLocalStorage=JSON.parse(localStorage.getItem("item"));
   // console.log(arrayLocalStorage)
   
+    if(arrayLocalStorage.length!=0){
+
     
    arrayLocalStorage.forEach(function(value){
       let str=document.createElement("div");
       str.style.display="flex"
+      str.style.borderBottom="solid black 1px"
       str.style.justifyContent="space-between"
       if(value.checked==true){
-         str.innerHTML=`<div >${value.name}</div>
-         <div style:"display:flex;">
-         <input type="checkbox"  onclick="checkIfSelect(${value.id})" Checked>
+         str.innerHTML=`<div style="text-decoration: line-through; flex-basis: 50%;" id=edit${value.id}>${value.name}</div>
+         <div style:"display:flex ;flex-basis: 50%; min-width: 300px;">
+         <button type="button"  onclick="editTheExistingValue(${value.id},edit${value.id})"><img id="editIcon" src="https://www.shutterstock.com/image-vector/edit-vector-icon-600w-546038194.jpg"></button>
+         <input type="checkbox" onclick="checkIfSelect(${value.id})" Checked>
          <button type="button"  onclick="deleteThisItem(${value.id})">x</button>
          </div>`;
-         if(value.checked==true){
-           str.style.textDecoration="line-through";
-         }
+         // if(value.checked==true){
+            
+         //   str.style.textDecoration="line-through";
+         // }
          //let myHr=document.createElement("hr");
          myDiv.appendChild(str)
         
       }
       else {
-         str.innerHTML=`<div >${value.name}</div>
-         <div style:"display:flex;">
+         str.innerHTML=`<div id=edit${value.id} style="flex-basis: 50%;">${value.name}</div>
+         <div style:"display:flex; flex-basis: 50%; min-width: 300px;">
+         <button type="button" onclick="editTheExistingValue(${value.id},edit${value.id})"><img id="editIcon" src="https://www.shutterstock.com/image-vector/edit-vector-icon-600w-546038194.jpg"></button>
          <input type="checkbox"  onclick="checkIfSelect(${value.id})">
          <button type="button"  onclick="deleteThisItem(${value.id})">x</button>
          </div>`;
@@ -112,40 +123,12 @@ function displayLocalStorage(){
       
       
    })
+}
    //myDiv.innerHTML=str;
    
    
    
 }
-
-//adding the item to list from the localStorage
-// function addToList(){
-//     let myDiv=document.getElementById("myDiv");
-//     let arrayLocalStorage=JSON.parse(localStorage.getItem("item"));
-//     let contentToBeFilled;
-//     arrayLocalStorage.forEach(function(value){
-//           if(value.id==getI()){
-//             contentToBeFilled=value;
-//           }
-//     })
-//    //  myDiv.style.display="flex";
-//    //  myDiv.style.justifyContent="space-between"
-//    //  myDiv.id=`myDiv`;
-//    let str=document.createElement("div");
-//    str.style.display="flex"
-//    str.style.justifyContent="space-between"
-//    str.innerHTML=`<div >${contentToBeFilled.name}</div>
-//    <div style:"display:flex;>
-//    <input type="checkbox"  onclick="checkIfSelect(${getI()}}">
-//    <button type="button"  onclick="deleteThisItem(${getI()})">x</button>
-//    </div>`
-//    myDiv.appendChild(str);
-//    location.reload();
-//   // let myHr=document.createElement("hr");
-//    //let myClass=document.getElementsByClassName("TaskBar")[0];
-//    // myClass.appendChild(myDiv);
-//    // myClass.appendChild(myHr);
-// }
 
 function checkIfSelect(val1,val2){
         console.log(val1)
@@ -187,3 +170,49 @@ function deleteThisItem(val1){
    localStorage.setItem("i",JSON.stringify(x));
  }
 }
+
+function editTheExistingValue(val,val2){
+   console.log(val,val2);
+   val2.contentEditable=true;
+   val2.style.outline="none";
+ //  val2.style.border="none"
+   // val2.setAttribute("tabindex","0");
+   val2.focus();
+   val2.addEventListener("keydown",function(event){
+      if(event.keyCode==13){
+         // localStorage.setItem(JSON.stringify(tArea.value));
+         // addToList();
+         console.log("hy")
+         console.log(val2.innerText)
+         if(val2.innerText.trim()!=''){
+           // console.log(val2.innerHTML)
+          //  obj=JSON.parse(localStorage.getItem("item"));
+           // console.log(obj,val2.innerText)
+           let count=0;
+           let ans;
+           let obj=JSON.parse(localStorage.getItem("item"));
+           obj.forEach(function(value){
+                 if(value.id==val){
+                       ans=count;
+                 }
+                 count++;
+           })
+           obj[ans].name=val2.innerText;
+            console.log(obj)  
+           localStorage.setItem("item",JSON.stringify(obj));
+              val2.contentEditable=false;
+         // addToLocalStorage();
+          //adding the element on the web page
+         // addToList();
+          
+           //incrementing the value of i
+            
+         }
+         console.log("here")
+         // val2.contentEditable=false; 
+         // val2.blur();
+   }
+      
+   });
+}
+

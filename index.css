@@ -54,7 +54,7 @@ hr {
     
 }
 
-@media screen and (max-width:531px) {
+@media screen and (max-width:672px) {
           .container{
             flex-direction: column;
           }
@@ -72,4 +72,8 @@ hr {
             max-height: 100px;
             overflow:scroll;
           }
+}
+#editIcon {
+  width: 15px;
+  height: 15px;
 }
