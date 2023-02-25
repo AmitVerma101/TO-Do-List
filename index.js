@@ -172,9 +172,21 @@ function deleteThisItem(val1){
 }
 
 function editTheExistingValue(val,val2){
+   let count=0;
+   let ans;
+   let obj=JSON.parse(localStorage.getItem("item"));
+   obj.forEach(function(value){
+         if(value.id==val){
+               ans=count;
+         }
+         count++;
+   })
    console.log(val,val2);
    val2.contentEditable=true;
    val2.style.outline="none";
+   val2.addEventListener("blur",function(){
+      contentBlur(val2,obj[ans].name,val)
+   });
  //  val2.style.border="none"
    // val2.setAttribute("tabindex","0");
    val2.focus();
@@ -184,20 +196,13 @@ function editTheExistingValue(val,val2){
          // addToList();
          console.log("hy")
          console.log(val2.innerText)
+        
          if(val2.innerText.trim()!=''){
            // console.log(val2.innerHTML)
           //  obj=JSON.parse(localStorage.getItem("item"));
            // console.log(obj,val2.innerText)
-           let count=0;
-           let ans;
-           let obj=JSON.parse(localStorage.getItem("item"));
-           obj.forEach(function(value){
-                 if(value.id==val){
-                       ans=count;
-                 }
-                 count++;
-           })
-           obj[ans].name=val2.innerText;
+         
+           obj[ans].name=val2.innerText.trim();
             console.log(obj)  
            localStorage.setItem("item",JSON.stringify(obj));
               val2.contentEditable=false;
@@ -208,11 +213,39 @@ function editTheExistingValue(val,val2){
            //incrementing the value of i
             
          }
+         else {
+            val2.contentEditable=false;
+            val2.innerHTML=obj[ans].name;
+         }
          console.log("here")
          // val2.contentEditable=false; 
          // val2.blur();
    }
       
    });
+}
+function contentBlur(val2,oldVal,val){
+   if(val2.innerText.trim!=''){
+      let count=0;
+      let ans;
+      let obj=JSON.parse(localStorage.getItem("item"));
+      obj.forEach(function(value){
+            if(value.id==val){
+                  ans=count;
+            }
+            count++;
+      })
+      obj[ans].name=val2.innerText.trim();
+      //console.log(obj)  
+     localStorage.setItem("item",JSON.stringify(obj));
+
+   }
+   else {
+      obj[ans].name=oldVal;
+      val2.innerHTML=oldVal;
+      //console.log(obj)  
+     localStorage.setItem("item",JSON.stringify(obj));
+   }
+  val2.contentEditable=false;
 }
 
